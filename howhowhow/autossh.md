@@ -37,7 +37,7 @@ Then write in `/etc/init/autossh.conf` file:
 	respawn
 	respawn limit 5 60
 
-	exec autossh -M 0 -N -R 2222:localhost:22 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -i /home/cde/.ssh/id_ecdsa_gandalf jokester@gandalf
+	exec autossh -M 0 -N -R 2222:localhost:22 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -i /home/user/.ssh/id_ecdsa user@server
 
 Start the script:
 
@@ -60,18 +60,18 @@ Edit a `/etc/systemd/system/autossh.service` script
 	After=network.target
 	 
 	[Service]
-	exec autossh -M 0 -N -R 2222:localhost:22 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -i /home/cde/.ssh/id_ecdsa_gandalf jokester@gandalf
+	exec autossh -M 0 -N -R 2222:localhost:22 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -i /home/user/.ssh/id_ecdsa user@server
 	 
 	[Install]
 	WantedBy=multi-user.target
 
 You then can run it by:
 
-	sytemctl autossh start
+	systemctl autossh start
 
 To check if it is well running:
 
-	sytemctl autossh status
+	systemctl autossh status
 
 To debug if you encounter some troubles:
 
@@ -84,8 +84,8 @@ To debug if you encounter some troubles:
 When you started your client autossh daemon, we can check on the server-side the port (2222 here) is open:
 
 	$ sudo netstat -nltp | grep 2222
-	tcp        0      0 0.0.0.0:2222            0.0.0.0:*               LISTEN      10820/sshd: jokeste 
-	tcp6       0      0 :::2222                 :::*                    LISTEN      10820/sshd: jokeste
+	tcp        0      0 0.0.0.0:2222            0.0.0.0:*               LISTEN      10820/sshd: user 
+	tcp6       0      0 :::2222                 :::*                    LISTEN      10820/sshd: user
 
 ### Configuration
 
