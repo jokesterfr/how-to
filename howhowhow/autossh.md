@@ -9,6 +9,7 @@
 * https://wiki.archlinux.org/index.php/Secure_Shell
 * http://www.openbsd.org/cgi-bin/man.cgi/OpenBSD-current/man5/sshd_config.5?query=sshd_config
 * https://gist.github.com/thomasfr/9707568
+* http://blog.philippklaus.de/2013/03/start-autossh-on-system-startup-using-systemd-on-arch-linux/
 
 ## Client-side
 
@@ -19,6 +20,17 @@
 or
 
 	sudo pacman -S autossh
+
+### Warning
+
+Before starting autossh in a init script, you should better try it before in command line:
+
+	$ autossh -M 0 -N -R 2222:localhost:22 -i /home/user/.ssh/id_ecdsa user@host
+	The authenticity of host 'host (32.180.0.114)' can't be established.
+	ECDSA key fingerprint is 09:60:c0:88:96:8b:97:e9:99:cf:b9:1f:26:08:7c:cd.
+	Are you sure you want to continue connecting (yes/no)?
+
+Say yes if it seems correct, now you can test it in an init script, go next step.
 
 ### Upstart 
 
@@ -60,18 +72,22 @@ Edit a `/etc/systemd/system/autossh.service` script
 	After=network.target
 	 
 	[Service]
-	exec autossh -M 0 -N -R 2222:localhost:22 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -i /home/user/.ssh/id_ecdsa user@server
+	ExecStart=/usr/bin/autossh -M 0 -N -R 2222:localhost:22 -o "ServerAliveInterval 60" -o "ServerAliveCountMax 3" -i /home/user/.ssh/id_ecdsa user@server
 	 
 	[Install]
 	WantedBy=multi-user.target
 
+Reload the daemon list:
+
+	systemctl daemon-reload
+
 You then can run it by:
 
-	systemctl autossh start
+	systemctl start autossh
 
 To check if it is well running:
 
-	systemctl autossh status
+	systemctl status autossh
 
 To debug if you encounter some troubles:
 
