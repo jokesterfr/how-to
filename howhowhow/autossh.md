@@ -24,7 +24,7 @@ or
 
 It may be optional, but that's more explicit to make a symlink:
 
-	sudo -ln -s /etc/init.d/autossh /lib/init/upstart-job
+	sudo ln -s /etc/init.d/autossh /lib/init/upstart-job
 
 Then write in `/etc/init/autossh.conf` file:
 
